@@ -6,18 +6,28 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
+import com.vignesh.config.AppConfigProperties;
+import com.vignesh.constants.TravelPlanConstants;
 import com.vignesh.entity.PlanCatergory;
 import com.vignesh.entity.TravelPlan;
 import com.vignesh.repository.IPlanCategoryRepository;
 import com.vignesh.repository.ITravelPlanRepository;
 
+@Controller
 public class TravelPlanManagementServiceImpl implements ITravelPlanManagementService {
 
 	@Autowired
 	private ITravelPlanRepository travelPlanRepository;
 	@Autowired
 	private IPlanCategoryRepository planCategoryRepository;
+	private Map<String,String> messages;
+	
+	@Autowired
+	public TravelPlanManagementServiceImpl(AppConfigProperties props) {
+		messages = props.getMessages();
+	}
 	
 	@Override
 	public String registerTravelPlan(TravelPlan plan) {
@@ -27,7 +37,7 @@ public class TravelPlanManagementServiceImpl implements ITravelPlanManagementSer
 		 * "TravelPlan is registered with the id value : "+savedPlan.getPlanId(); } else
 		 * { return "Problem in registering the TravelPlan. Register Failed!"; }
 		 */
-		return savedPlan.getPlanId()!=null?"TravelPlan is registered with the id value : "+savedPlan.getPlanId():"Problem in registering the TravelPlan. Register Faild!";
+		return savedPlan.getPlanId()!=null?messages.get(TravelPlanConstants.REGISTER_SUCCESS)+savedPlan.getPlanId():messages.get(TravelPlanConstants.REGISTER_FAILURE);
 	}
 
 	@Override
@@ -52,7 +62,7 @@ public class TravelPlanManagementServiceImpl implements ITravelPlanManagementSer
 		 * if(opObj.isPresent()) { return opObj.get(); } else { throw new
 		 * IllegalArgumentException("Plan Id is not found!"); }
 		 */
-		return travelPlanRepository.findById(planId).orElseThrow(()->new IllegalArgumentException("Plan Id is not found!"));
+		return travelPlanRepository.findById(planId).orElseThrow(()->new IllegalArgumentException(messages.get(TravelPlanConstants.FIND_BY_ID_FAILURE)));
 	}
 
 	@Override
@@ -60,10 +70,10 @@ public class TravelPlanManagementServiceImpl implements ITravelPlanManagementSer
 		Optional<TravelPlan> opObj = travelPlanRepository.findById(plan.getPlanId());
 		if(opObj.isPresent()) {
 			TravelPlan updatedPlan = travelPlanRepository.save(plan);
-			return "TravelPlan with id : "+updatedPlan.getPlanId()+" is update.";
+			return messages.get(TravelPlanConstants.UPDATE_SUCCESS)+updatedPlan.getPlanId();
 		}
 		else {
-			throw new IllegalArgumentException("Update failed! No such Travel Plan is regiestered to update.");
+			throw new IllegalArgumentException(messages.get(TravelPlanConstants.UPDATE_FAILURE)+plan.getPlanId());
 		}
 	}
 
@@ -72,23 +82,24 @@ public class TravelPlanManagementServiceImpl implements ITravelPlanManagementSer
 		Optional<TravelPlan> opObj = travelPlanRepository.findById(planId);
 		if(opObj.isPresent()) {
 			travelPlanRepository.deleteById(planId);
-			return "TravelPlan with id : "+planId+" is deleted.";
+			return messages.get(TravelPlanConstants.DELETE_SUCCESS)+planId;
 		}
 		else {
-			throw new IllegalArgumentException("Update failed! No such Travel Plan is regiestered to delete.");
+			throw new IllegalArgumentException(messages.get(TravelPlanConstants.DELETE_FAILURE)+planId);
 		}
 	}
 
 	@Override
-	public String changeTravelPlanStatus(Integer planId, Character status) {
+	public String changeTravelPlanStatus(Integer planId, String status) {
 		Optional<TravelPlan> opObj = travelPlanRepository.findById(planId);
 		if(opObj.isPresent()) {
 			TravelPlan plan = opObj.get();
 			plan.setActiveSW(status);
-			return "Status of TravelPlan with id : "+planId+" is changed to "+status+".";
+			travelPlanRepository.save(plan);
+			return messages.get(TravelPlanConstants.STATUS_CHANGE_SUCCESS)+planId;
 		}
 		else {
-			throw new IllegalArgumentException("Status change failed! No such Travel Plan is regiestered in the first place.");
+			throw new IllegalArgumentException(messages.get(TravelPlanConstants.STATUS_CHANGE_FAILURE)+planId);
 		}
 	}
 }

@@ -1,0 +1,29 @@
+# Conversion to YAML from Properties formar report
+# Warnings:
+# - The yaml file had comments which are lost in the refactoring!
+spring:
+  application:
+    name: Spring_Micro_Project
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: root
+    password: root
+  jpa:
+    show-sql: true
+server:
+  port: 4041
+
+#Messages
+plan:
+  module:
+    messages:
+      register-success: Register Success! Travel Plan is registered with Id value
+      register-failure: Register Failed! Problem in registering the Travel Plan
+      find-by-id-failure: Travel Plan is not found with Id value
+      update-success: Update Success! Travel Plan is updated successfully with Id value
+      update-failure: Update Failed! Problem in updating the Travel Plan with Id value
+      delete-success: Delete Success! Travel Plan is deleted successfully with Id value
+      delete-failure: Delete Failed! Problem in deleting the Travel Plan with Id value
+      status-change-success: Status Change Success! Status of Travel Plan is changed successfully with Id value
+      status-change-failure: Status Change Failed! Problem in changing the status of the Travel Plan with Id value

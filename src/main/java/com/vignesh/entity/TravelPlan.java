@@ -31,7 +31,7 @@ public class TravelPlan {
 	@Column(name="PLAN_CATEGORY_ID")
 	private Integer planCategoryId;
 	@Column(name="ACTIVE_SW")
-	private Character activeSW;
+	private String activeSW="active";
 	@Column(name="CREATED_DATE", updatable=false)
 	@CreationTimestamp
 	private LocalDateTime createdDate;

@@ -13,6 +13,6 @@ public interface ITravelPlanManagementService {
 	public TravelPlan getTravelPlanById(Integer planId);
 	public String updateTravelPlan(TravelPlan plan);
 	public String deleteTravelPlan(Integer planId);
-	public String changeTravelPlanStatus(Integer planId, Character status);
+	public String changeTravelPlanStatus(Integer planId, String status);
 	
 }
